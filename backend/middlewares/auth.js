@@ -3,6 +3,8 @@ const jwt = require('jsonwebtoken');
 module.exports = (req, res, next) => {
 	const authHeader = req.get('Authorization');
 
+	console.log({ 'req.body---Auth-middleware': req.body });
+
 	if (!authHeader) {
 		req.isAuth = 0;
 		return next();

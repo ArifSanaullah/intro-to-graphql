@@ -27,23 +27,31 @@ module.exports = {
 		}
 	},
 	login: async ({ email, password }) => {
-		const foundUser = await User.findOne({ email });
-		if (!foundUser) {
-			throw new Error('Invalid credentials');
-		}
-		const passowrdsMatch = await bcrypt.compare(
-			password,
-			foundUser.password
-		);
+		// eslint-disable-next-line no-useless-catch
+		try {
+			const foundUser = await User.findOne({ email });
+			if (!foundUser) {
+				return new Error('Invalid credentials');
+			}
 
-		if (!passowrdsMatch) {
-			throw new Error('Invalid credentials');
+			const passowrdsMatch = await bcrypt.compare(
+				password,
+				foundUser.password
+			);
+
+			if (!passowrdsMatch) {
+				return new Error('Invalid credentials');
+			}
+
+			const token = await jwt.sign(
+				{ userId: foundUser._id, email: foundUser.email },
+				'MY_PRIVATE_SECRET_KEY',
+				{ expiresIn: '1h' }
+			);
+
+			return { userId: foundUser._id, token, tokenExpiration: 1 };
+		} catch (error) {
+			return error;
 		}
-		const token = await jwt.sign(
-			{ userId: foundUser._id, email: foundUser.email },
-			'MY_PRIVATE_SECRET_KEY',
-			{ expiresIn: '1h' }
-		);
-		return { userId: foundUser._id, token, tokenExpiration: 1 };
 	},
 };

@@ -2,6 +2,7 @@ const express = require('express');
 const { json } = require('body-parser');
 const { graphqlHTTP } = require('express-graphql');
 const mongoose = require('mongoose');
+const cors = require('cors');
 
 const grapchQlSchema = require('./graphql/schema');
 const graphqlResolvers = require('./graphql/resolvers');
@@ -10,8 +11,23 @@ const isAuth = require('./middlewares/auth');
 const app = express();
 
 app.use(json());
-
+app.use(cors());
 app.use(isAuth);
+
+app.use((req, res, next) => {
+	res.setHeader('Access-Control-Allow-Origin', '*');
+	res.setHeader('Access-Control-Allow-Methods', 'POST,GET,OPTIONS');
+	res.setHeader(
+		'Access-Control-Allow-Headers',
+		'Content-Type, Authorization'
+	);
+
+	if (req.method === 'OPTIONS') {
+		return res.sendStatus(200);
+	}
+
+	return next();
+});
 
 app.use(
 	'/graphql',
@@ -22,7 +38,7 @@ app.use(
 	})
 );
 
-const PORT = 3000;
+const PORT = 8000;
 
 mongoose
 	.connect(

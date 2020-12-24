@@ -1,0 +1,63 @@
+.auth-form {
+	width: 40rem;
+	max-width: 80%;
+	margin: 5rem auto;
+}
+
+.form-group {
+	margin-bottom: 1rem;
+}
+
+.form-group label,
+.form-group input {
+	width: 100%;
+	display: block;
+}
+
+.form-group label {
+	margin-bottom: 0.5rem;
+}
+
+.form-group input {
+	padding: 0.5rem 1rem;
+	border-radius: 3px;
+	outline: none;
+	border: 1px solid #049e9e;
+}
+
+.form-group input:focus,
+.form-group input:active {
+	box-shadow: 0 0 2px 3px rgba(1, 209, 209, 0.4);
+}
+
+.btn {
+	padding: 0.5rem 1rem;
+	margin: 0 0.25rem;
+	border-radius: 3px;
+	font: inherit;
+	cursor: pointer;
+	box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.24);
+}
+
+.btn:focus {
+	outline: none;
+}
+
+.btn-primary {
+	color: #fff;
+	background-color: #01d1d1;
+	border: 1px solid #01d1d1;
+}
+
+.btn-primary:hover {
+	background-color: #049e9e;
+	border: 1px solid #049e9e;
+}
+
+.ctas .btn:first-child {
+	margin-left: 0;
+}
+
+.ctas .btn:last-child {
+	margin-right: 0;
+}
