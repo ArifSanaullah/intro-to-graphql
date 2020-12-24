@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom';
 
 import './MainNavigation.css';
 
-function MainNavigation() {
+function MainNavigation({ authState: { isLoggedIn } }) {
 	return (
 		<header className="main-navigation">
 			<div className="main-navigation__logo">
@@ -17,9 +17,11 @@ function MainNavigation() {
 					<li className="main-navigation__item">
 						<NavLink to="/events">Events</NavLink>
 					</li>
-					<li className="main-navigation__item">
-						<NavLink to="/bookings">Bookings</NavLink>
-					</li>
+					{isLoggedIn && (
+						<li className="main-navigation__item">
+							<NavLink to="/bookings">Bookings</NavLink>
+						</li>
+					)}
 				</ul>
 			</nav>
 		</header>

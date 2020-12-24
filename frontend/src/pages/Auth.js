@@ -1,19 +1,34 @@
-import { useState } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import axios from 'axios';
+import { useHistory } from 'react-router-dom';
 
+import { AuthContext } from '../store/contexts/authContext';
 import './Auth.css';
+import { LOGIN, LOGOUT } from '../store/actionTypes';
 
 function Auth() {
 	const [form, setForm] = useState({
 		email: '',
 		password: '',
 		isLoginMode: true,
+		loading: false,
 	});
+
+	const history = useHistory();
+
+	const {
+		state: { isLoggedIn },
+		dispatch,
+	} = useContext(AuthContext);
 
 	const onChangeHandler = ({ target: { name, value } }) => {
 		setForm({ ...form, [name]: value.trim() });
 	};
+
+	useEffect(() => {
+		console.log({ isLoggedIn: isLoggedIn });
+	}, [isLoggedIn]);
 
 	const onSubmit = async (e) => {
 		e.preventDefault();
@@ -45,6 +60,8 @@ function Auth() {
 		}
 
 		try {
+			setForm({ ...form, loading: true });
+
 			const {
 				data: { data, errors },
 			} = await axios.post('http://localhost:8000/graphql', requestBody, {
@@ -52,57 +69,101 @@ function Auth() {
 			});
 
 			if (errors?.length > 0) {
-				console.log({ data, errors });
+				setForm({ ...form, loading: false });
 				return errors.forEach((error) => {
 					toast.error(error.message);
 				});
 			}
 
-			console.log({ data });
+			if (form.isLoginMode) {
+				const {
+					login: { userId, token, expirationTime },
+				} = data;
+
+				dispatch({
+					type: LOGIN,
+					payload: { userId, token, expirationTime },
+				});
+
+				toast.success('You are now logged in');
+				setForm({
+					email: '',
+					password: '',
+					isLoginMode: true,
+					loading: false,
+				});
+				history.push('/events');
+			} else {
+				const { createUser } = data;
+				console.log(createUser);
+			}
 		} catch (error) {
 			toast.error("Something isn't right!");
+			setForm({ ...form, loading: false });
 		}
 	};
 
 	return (
 		<form className="auth-form">
-			<div className="form-group">
-				<label htmlFor="email">Email</label>
-				<input
-					value={form.email}
-					onChange={onChangeHandler}
-					type="text"
-					className="form-control"
-					id="email"
-					name="email"
-				/>
-				<ToastContainer />
-			</div>
-			<div className="form-group">
-				<label htmlFor="password">Password</label>
-				<input
-					value={form.password}
-					onChange={onChangeHandler}
-					type="password"
-					className="form-control"
-					id="password"
-					name="password"
-				/>
-			</div>
-			<div className="ctas">
+			{isLoggedIn ? (
 				<button
-					className="btn-primary btn"
-					onClick={(e) => {
-						e.preventDefault();
-						setForm({ ...form, isLoginMode: !form.isLoginMode });
-					}}
+					className="btn btn-primary"
+					onClick={() => dispatch({ type: LOGOUT })}
 				>
-					Switch to {form.isLoginMode ? 'Signup' : 'Login'}
+					Logout
 				</button>
-				<button className="btn-primary btn" onClick={onSubmit}>
-					{form.isLoginMode ? 'Login' : 'Signup'}
-				</button>
-			</div>
+			) : (
+				<>
+					<div className="form-group">
+						<label htmlFor="email">Email</label>
+						<input
+							value={form.email}
+							onChange={onChangeHandler}
+							type="text"
+							className="form-control"
+							id="email"
+							name="email"
+						/>
+						<ToastContainer />
+					</div>
+					<div className="form-group">
+						<label htmlFor="password">Password</label>
+						<input
+							value={form.password}
+							onChange={onChangeHandler}
+							type="password"
+							className="form-control"
+							id="password"
+							name="password"
+						/>
+					</div>
+					<div className="ctas">
+						<button
+							className="btn-primary btn"
+							onClick={(e) => {
+								e.preventDefault();
+								setForm({
+									...form,
+									isLoginMode: !form.isLoginMode,
+								});
+							}}
+						>
+							Switch to {form.isLoginMode ? 'Signup' : 'Login'}
+						</button>
+						<button
+							className="btn-primary btn"
+							onClick={onSubmit}
+							disabled={form.loading}
+						>
+							{form.loading
+								? 'Please wait'
+								: form.isLoginMode && !form.loading
+								? 'Login'
+								: 'Signup'}
+						</button>
+					</div>
+				</>
+			)}
 		</form>
 	);
 }
