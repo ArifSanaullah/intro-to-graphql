@@ -12,9 +12,6 @@ function MainNavigation({ authState: { isLoggedIn } }) {
 			<nav className="main-navigation__items">
 				<ul>
 					<li className="main-navigation__item">
-						<NavLink to="/auth">Authentication</NavLink>
-					</li>
-					<li className="main-navigation__item">
 						<NavLink to="/events">Events</NavLink>
 					</li>
 					{isLoggedIn && (
@@ -22,6 +19,9 @@ function MainNavigation({ authState: { isLoggedIn } }) {
 							<NavLink to="/bookings">Bookings</NavLink>
 						</li>
 					)}
+					<li className="main-navigation__item">
+						<NavLink to="/auth">Account</NavLink>
+					</li>
 				</ul>
 			</nav>
 		</header>

@@ -1,11 +1,11 @@
-import { useState, useContext, useEffect } from 'react';
+import { useState, useContext } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import axios from 'axios';
 import { useHistory } from 'react-router-dom';
 
 import { AuthContext } from '../store/contexts/authContext';
-import './Auth.css';
 import { LOGIN, LOGOUT } from '../store/actionTypes';
+import './Auth.css';
 
 function Auth() {
 	const [form, setForm] = useState({
@@ -25,10 +25,6 @@ function Auth() {
 	const onChangeHandler = ({ target: { name, value } }) => {
 		setForm({ ...form, [name]: value.trim() });
 	};
-
-	useEffect(() => {
-		console.log({ isLoggedIn: isLoggedIn });
-	}, [isLoggedIn]);
 
 	const onSubmit = async (e) => {
 		e.preventDefault();
@@ -155,11 +151,11 @@ function Auth() {
 							onClick={onSubmit}
 							disabled={form.loading}
 						>
-							{form.loading
-								? 'Please wait'
-								: form.isLoginMode && !form.loading
+							{form.isLoginMode && !form.loading
 								? 'Login'
-								: 'Signup'}
+								: !form.isLoginMode && !form.loading
+								? 'Signup'
+								: 'Please wait'}
 						</button>
 					</div>
 				</>
