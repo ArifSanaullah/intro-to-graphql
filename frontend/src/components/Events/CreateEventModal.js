@@ -4,7 +4,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import axios from 'axios';
 import 'react-toastify/dist/ReactToastify.css';
 
-import { AuthContext } from '../store/contexts/authContext';
+import { AuthContext } from '../../store/contexts/authContext';
 
 const customStyles = {
 	content: {
@@ -71,6 +71,7 @@ function CreateEventModal({
 				title
 				price
 				date
+				description
 			}
 		}`,
 		};
@@ -83,9 +84,6 @@ function CreateEventModal({
 
 		if (errors?.length) {
 			return errors.forEach((error) => {
-				if (error.message === 'Unauthorized') {
-					return toast.warning('Please login to create an event');
-				}
 				toast.error(error.message);
 			});
 		}

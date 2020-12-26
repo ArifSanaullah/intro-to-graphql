@@ -99,3 +99,30 @@ body {
 	display: flex;
 	justify-content: flex-end;
 }
+
+.view-event-content h1 {
+	text-transform: capitalize;
+	font-size: 1.4rem;
+	margin-bottom: 1rem;
+}
+
+.view-event-content h2 {
+	font-size: 1rem;
+	margin-bottom: 1rem;
+}
+
+.bookings {
+	margin: 0;
+	padding: 0;
+}
+
+.bookings .booking {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin: 0.5rem auto;
+	padding: 0.5rem;
+	width: 40rem;
+	max-width: 90%;
+	border: 1px solid #01d1d1;
+}

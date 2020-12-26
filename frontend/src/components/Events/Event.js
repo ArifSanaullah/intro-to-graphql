@@ -1,8 +1,9 @@
 import { useContext } from 'react';
 
 import { AuthContext } from '../../store/contexts/authContext';
+import ViewEvent from '../../components/Events/ViewEvent';
 
-function Event({ title, price, creator, date }) {
+function Event({ title, price, creator, date, _id, description }) {
 	const {
 		state: { userId },
 	} = useContext(AuthContext);
@@ -17,7 +18,11 @@ function Event({ title, price, creator, date }) {
 			</div>
 			<div>
 				{!creator || creator !== userId ? (
-					<button className="btn btn-primary">View details</button>
+					<ViewEvent
+						event={{ _id, title, description, price, date }}
+						openModalButtonText="View event"
+						subtitle="Book event"
+					/>
 				) : (
 					<p>You're the owner of this event</p>
 				)}

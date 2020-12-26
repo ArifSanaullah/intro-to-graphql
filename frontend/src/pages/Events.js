@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 
-import CreateEventModal from '../components/CreateEventModal';
+import CreateEventModal from '../components/Events/CreateEventModal';
 import { AuthContext } from '../store/contexts/authContext';
 import Event from '../components/Events/Event';
 import Loader from '../components/Loader';
@@ -16,6 +16,7 @@ function Events() {
 	const [events, setEvents] = useState([]);
 
 	useEffect(() => {
+		let didMount = true;
 		const fetchEvents = async () => {
 			try {
 				const {
@@ -29,6 +30,7 @@ function Events() {
 						_id
 						price
 						date
+						description
 						creator {
 							_id
 						}
@@ -36,9 +38,17 @@ function Events() {
 				}`,
 				});
 
-				setEvents(events);
+				if (didMount) {
+					setEvents(events);
+				}
+
+				return () => {
+					didMount = false;
+				};
 			} catch (error) {
-				toast.error('Something went wrong');
+				if (didMount) {
+					toast.error('Something went wrong');
+				}
 			}
 		};
 		fetchEvents();
@@ -60,15 +70,19 @@ function Events() {
 			)}
 			<ul className="events__list">
 				{events.length ? (
-					events.map(({ title, _id, price, creator, date }) => (
-						<Event
-							title={title}
-							key={_id}
-							price={price}
-							creator={creator._id}
-							date={date}
-						/>
-					))
+					events.map(
+						({ title, _id, price, creator, date, description }) => (
+							<Event
+								title={title}
+								key={_id}
+								price={price}
+								creator={creator._id}
+								date={date}
+								_id={_id}
+								description={description}
+							/>
+						)
+					)
 				) : (
 					<Loader />
 				)}
