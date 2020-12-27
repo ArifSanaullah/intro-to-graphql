@@ -1,7 +1,14 @@
 /* eslint-disable no-useless-catch */
+const DataLoader = require('dataloader');
+
 const User = require('../../models/user');
 const Event = require('../../models/event');
 const { dateToString } = require('../../helpers/date');
+
+const eventLoader = new DataLoader((evendIds) => getEvents(evendIds));
+const userLoader = new DataLoader((userIds) => {
+	const 
+});
 
 const user = async (userId) => {
 	try {
@@ -10,8 +17,8 @@ const user = async (userId) => {
 		return {
 			...user._doc,
 			password: null,
-			createdEvents: getEvents.bind(this, user._doc.createdEvents),
-		};
+			createdEvents: await eventLoader.loadMany(user._doc.createdEvents),
+		}; 
 	} catch (error) {
 		console.log('🚀 ~ file: app.js ~ user ~ line 20 ~ user ~ error', error);
 		throw error;
@@ -32,9 +39,9 @@ const getEvents = async (eventIds) => {
 
 const getEvent = async (eventId) => {
 	try {
-		const event = await Event.findById(eventId);
+		const event = await eventLoader.load(eventId.toString());
 
-		return await transformEvent(event);
+		return event;
 	} catch (error) {
 		throw error;
 	}
