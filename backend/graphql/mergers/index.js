@@ -29,9 +29,11 @@ const getEvents = async (eventIds) => {
 	try {
 		const events = await Event.find({ _id: { $in: eventIds } });
 
-		return events.map((event) => {
-			return transformEvent(event);
-		});
+		return events
+			.map((event) => {
+				return transformEvent(event);
+			})
+			.sort((a, b) => a._id.toString() - b._id.toString());
 	} catch (error) {
 		throw error;
 	}
