@@ -7,18 +7,18 @@ const { dateToString } = require('../../helpers/date');
 
 const eventLoader = new DataLoader((evendIds) => getEvents(evendIds));
 const userLoader = new DataLoader((userIds) => {
-	const 
+	return User.find({ _id: { $in: userIds } });
 });
 
 const user = async (userId) => {
 	try {
-		const user = await User.findById(userId);
+		const user = await userLoader.load(userId.toString());
 
 		return {
 			...user._doc,
 			password: null,
 			createdEvents: await eventLoader.loadMany(user._doc.createdEvents),
-		}; 
+		};
 	} catch (error) {
 		console.log('🚀 ~ file: app.js ~ user ~ line 20 ~ user ~ error', error);
 		throw error;

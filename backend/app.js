@@ -66,3 +66,23 @@ mongoose
 			errorMessage
 		);
 	});
+
+// for local db - comment above connect function && uncomment below one
+
+// mongoose
+// 	.connect(`mongodb://localhost:27017`, {
+// 		useNewUrlParser: true,
+// 		useUnifiedTopology: true,
+// 		useCreateIndex: true,
+// 		useFindAndModify: false,
+// 	})
+// 	.then(() => {
+// 		console.log(
+// 			'🚀 ~ file: app.js ~ line 73 ~ mongoose.connect.then ~ connected to DATABASE '
+// 		);
+
+// 		app.listen(PORT, null, () => {
+// 			const log = `Listening on port ${PORT}`;
+// 			console.log('🚀 ~ file: app.js ~ line 77 ~ app.listen ~ log', log);
+// 		});
+// 	});
