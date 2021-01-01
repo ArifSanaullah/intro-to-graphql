@@ -65,15 +65,21 @@ function CreateEventModal({
 		}
 
 		const requestBody = {
-			query: `mutation {
-			createEvent(eventInput: { title: "${title}", description: "${description}", date: "${date}", price: ${+price} }) {
-				_id
-				title
-				price
-				date
-				description
-			}
-		}`,
+			query: `mutation CreateEvent($title: String!, $_id: ID!, $price: Float!, $date: String!, $description: String!) {
+						createEvent(eventInput: { title: $title, description: $description, date: $date, price: $price }) {
+							_id
+							title
+							price
+							date
+							description
+						}
+					}`,
+			variables: {
+				title,
+				description,
+				date,
+				price: +price,
+			},
 		};
 
 		const {

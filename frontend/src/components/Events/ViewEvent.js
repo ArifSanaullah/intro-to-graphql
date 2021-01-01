@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useCallback } from 'react';
 import Modal from 'react-modal';
 import { toast, ToastContainer } from 'react-toastify';
 import axios from 'axios';
@@ -26,56 +26,63 @@ function CreateEventModal({ subtitle, openModalButtonText, event }) {
 		state: { token, userId },
 	} = useContext(AuthContext);
 
+	const onBookHandler = useCallback(
+		async (e) => {
+			e.preventDefault();
+
+			if (!token || !userId) {
+				return toast.warning('Please login to book an event');
+			}
+
+			const requestBody = {
+				query: `mutation BookEvent($id: ID!) { 
+							bookEvent(eventId: $id) {
+                				_id
+                				createdAt
+            				}
+						}`,
+				variables: {
+					id: event._id,
+				},
+			};
+
+			try {
+				const {
+					data: { errors },
+				} = await axios.post(
+					'http://localhost:8000/graphql',
+					requestBody,
+					{
+						headers: { Authorization: `Bearer ${token}` },
+					}
+				);
+
+				if (errors?.length) {
+					return errors.forEach((error) => {
+						toast.error(error.message);
+					});
+				}
+
+				toast.success('Booked');
+				closeModal();
+			} catch (error) {
+				toast.error('Something went wrong');
+				closeModal();
+			}
+		},
+
+		[event._id, token, userId]
+	);
+
 	function openModal() {
 		setIsOpen(true);
 	}
 
-	function afterOpenModal() {
-		// references are now sync'd and can be accessed.
-		// subtitle.style.color = '#f00';
-	}
+	function afterOpenModal() {}
 
 	function closeModal() {
 		setIsOpen(false);
 	}
-
-	const onBookHandler = async (e) => {
-		e.preventDefault();
-
-		if (!token || !userId) {
-			return toast.warning('Please login to book an event');
-		}
-
-		const requestBody = {
-			query: `mutation {
-            bookEvent(eventId: "${event._id}") {
-                _id
-                createdAt
-            }
-        }`,
-		};
-
-		try {
-			const {
-				data: { data, errors },
-			} = await axios.post('http://localhost:8000/graphql', requestBody, {
-				headers: { Authorization: `Bearer ${token}` },
-			});
-
-			if (errors?.length) {
-				return errors.forEach((error) => {
-					toast.error(error.message);
-				});
-			}
-
-			console.log(data);
-			toast.success('Booked');
-			// closeModal();
-		} catch (error) {
-			toast.error('Something went wrong');
-			closeModal();
-		}
-	};
 
 	return (
 		<div>

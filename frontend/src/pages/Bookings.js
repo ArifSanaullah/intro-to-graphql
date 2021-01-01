@@ -57,12 +57,15 @@ function Bookings() {
 
 	const onCancelBooking = async (bookingId) => {
 		const requestBody = {
-			query: `mutation {
-			cancelBooking(bookingId: "${bookingId}") {
-				title
-				_id
-			}
-		}`,
+			query: `mutation CancelBooking($id: ID!) {
+						cancelBooking(bookingId: $id) {
+							title
+							_id
+						}
+					}`,
+			variables: {
+				id: bookingId,
+			},
 		};
 
 		try {
